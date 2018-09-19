@@ -1,0 +1,159 @@
+---
+# tasks file for local gpu-nodes
+#
+
+# Some wierd data copying automation
+
+- name: Copy syncronization script
+  tags: kartasal
+  copy: src=files/kartasal-file-copier.sh dest=/root/kartasal-file-copier.sh mode=0755
+
+#- name: make sure postfix is installed
+#  tags: postfix
+#  action: >
+#    {{ ansible_pkg_mgr }}
+#    name=postfix
+#    state=installed
+
+#- name: Lets tag main.cf to ansible
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="# This file is {{ ansible_managed }} "
+#              state=present
+#              regexp="^# This file is .*$"
+#              backup=yes
+#
+#- name: Lets listen to internal interface
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf 
+#              line="inet_interfaces = localhost, {{ int_ip_addr }}" 
+#              backup=yes 
+#              regexp="^inet_interfaces =.*$"
+#              state=present
+#  notify:
+#    - reload postfix
+#
+#- name: Lets masquerade mail from internal hosts
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="masquerade_domains = {{ intDomain }}.cc.tut.fi, {{ intDomain }}, localdomain"
+#              backup=yes 
+#              regexp="^masquerade_domains =.*$"
+#              state=present
+#
+#  #when: postfix_relayhost == "{{ inventory_hostname }}" 
+#  notify:
+#    - reload postfix
+#
+#- name: Create sender_canonical_db for node mails
+#  tags: postfix
+#  copy: src=files/sender_canonical dest=/etc/postfix/sender_canonical
+#  register: postfix_sender_canonical
+#  
+#- name: Ensure sender_canonical_db is compiled
+#  tags: postfix
+#  shell: postmap /etc/postfix/sender_canonical
+#  when: postfix_sender_canonical | changed
+#
+#- name: Create receiver_canonical for node mails
+#  tags: postfix
+#  copy: src=files/receiver_canonical dest=/etc/postfix/receiver_canonical
+#  register: postfix_receiver_canonical
+#  
+#- name: Ensure receiver_canonical_db is compiled
+#  tags: postfix
+#  shell: postmap /etc/postfix/receiver_canonical
+#  when: postfix_receiver_canonical | changed
+#
+#- name: Add sender_canonical to postfix.conf
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="sender_canonical_maps = pcre:/etc/postfix/sender_canonical"
+#              backup=yes
+#              regexp="^sender_canonical_maps =.*$"
+#              state=present
+#  notify: reload postfix
+#
+#- name: Add receiver_canonical to postfix.conf
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="recipient_canonical_maps = pcre:/etc/postfix/receiver_canonical"
+#              backup=yes
+#              regexp="^recipient_canonical_maps =.*$"
+#              state=present
+#  notify: reload postfix
+#
+#- name: Make sure that sender_canonical is used
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="local_header_rewrite_clients = static:all"
+#              backup=yes
+#              regexp="^local_header_rewrite_clients =.*$"
+#              state=present
+#  notify: reload postfix
+#
+#- name: Make sure that remoteheaders are modified
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="remote_header_rewrite_domain = {{ intDomain }}.cc.tut.fi, {{ intDomain }}"
+#              backup=yes
+#              regexp="^remote_header_rewrite_domain =.*$"
+#              state=present
+#  notify: reload postfix
+#
+#- name: Make sure that sender_canonical is used
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="mydestination = $myhostname, localhost.$mydomain, localhost"
+#              backup=yes
+#              regexp="^mydestination =.*$"
+#              state=present
+#  notify: reload postfix
+#
+#
+#- name: Add local modulepath to /etc/profile.d
+#  tags: local
+#  copy: src=files/tut-modules.sh dest=/etc/profile.d/tut-modules.sh
+#
+#- name: Add admin group to sudoers
+#  tags: sudo
+#  lineinfile: "dest=/etc/sudoers
+#              line='%admin  ALL=(ALL)       NOPASSWD: ALL'
+#              backup=yes
+#              regexp='^%admin .*$'
+#              state=present
+#              validate='visudo -cf %s'"
+## inet_interfaces = localhost
+#- name: Add xpra-repo to login node[s]
+#  tags: xpra
+#  yum_repository:
+#    name: xpra 
+#    description: XPRA remote gui repo
+#    baseurl: http://xpra.org/dists/CentOS/7/x86_64/
+#    gpgkey: https://xpra.org/gpg.asc
+#    gpgcheck: yes
+#
+#- name: Install xpra packages
+#  tags: xpra
+#  package: name=xpra state=installed
+#
+#- name: Add local Mellanox-repo
+#  tags: ib
+#  yum_repository:
+#    name: local-mellanox 
+#    description: Mellanox IB-stack repo
+#    baseurl: file:///home/Mellanox-repo/RPMS
+#    gpgcheck: no
+#
+#- name: Copy local krb5.conf to login-nodes
+#  tags: intrahome
+#  copy: src=files/krb5.conf dest=/etc/krb5.conf
+#
+#- name: Add --trust-dns flag to request-key.conf
+#  tags: intrahome
+#  lineinfile: 
+#      dest=/etc/request-key.d/cifs.spnego.conf
+#      line="create  cifs.spnego    * * /usr/sbin/cifs.upcall --trust-dns %k"
+#      regexp="^create  cifs\.spnego.*"
+#      state=present
+#
