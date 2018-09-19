@@ -8,7 +8,7 @@ LOG=/tmp/kartasal-file-copy.log
 STAMP=datacopy.txt
 
 #for Debug uncomment
-set -x 
+#set -x 
 
 # Let's check if we have new stamp
 if [[ -r "${SRC}/${STAMP}" ]]
